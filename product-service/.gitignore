@@ -4,3 +4,10 @@ jspm_packages
 
 # Serverless directories
 .serverless
+
+# Babel
+dist
+
+# Fixtures 
+mock_DB
+.env

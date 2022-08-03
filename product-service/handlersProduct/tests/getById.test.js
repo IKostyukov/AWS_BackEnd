@@ -1,6 +1,4 @@
-const { getProductsList } = require('../handlersProduct/getList.js');
-// const { mock } = 
-
+const getProductsList = require('../getList');
 
 test('retrieve existing productId 4', async() => {
   let event = {};

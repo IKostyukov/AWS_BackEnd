@@ -1,6 +1,5 @@
-const { getProductsList } = require('../handlersProduct/getList.js');
-const { mock } = require("../handlersProduct/mock.js");
-
+const getProductsList = require('../getList');
+const mock = require("../mock");
 
 test('retrieve product list', async() => {
   const expected = await getProductsList()
