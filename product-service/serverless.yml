@@ -1,5 +1,5 @@
 console: true
-service: product-service-task4-1
+service: product-service
 # app and org for use with dashboard.serverless.com
 # app: product-service-task4-1
 # plugins:
@@ -25,11 +25,34 @@ provider:
   stage: dev
   region: eu-west-1
   environment:
+    SNS_URL:
+      Ref: SNSTopic
     PG_HOST: ${self:custom.dotenvVars.PG_HOST, env:PG_HOST, ''}
     PG_USERNAME: ${self:custom.dotenvVars.PG_USERNAME, env:PG_USERNAME, ''}
     PG_DATABASE: ${self:custom.dotenvVars.PG_DATABASE, env:PG_DATABASE, ''}
     PG_PASSWORD: ${self:custom.dotenvVars.PG_PASSWORD, env:PG_PASSWORD, ''}
     PG_PORT: ${self:custom.dotenvVars.PG_PORT, env:PG_PORT, ''}
+
+  iamRoleStatments:
+    - Effect: "Alow"
+      Actions: "sns:*"
+      Recource:
+        Ref:
+
+resources:
+  Resources:
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: product-service-topic
+
+    SNSSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: igorkostukov@gmail.com
+        Protocol: email
+        TopicArn:
+          Ref: SNSTopic
 
 # you can add statements to the Lambda function's IAM Role here
 #  iam:
@@ -62,6 +85,16 @@ provider:
 #    - include-me-dir/**
 
 functions:
+  catalogBatchProcess:
+    handler: handlersProduct/catalogBatch.catalogBatchProcess
+    events:
+      - sqs:
+        batchsize: 5
+        arn:
+          Fn::GetAtt:
+            - SQSQueue
+            - Arn
+
   getProductsList:
     handler: handlersProduct/getList.getProductsList
     events:
